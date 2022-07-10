@@ -1,3 +1,3 @@
 # MarmelabPO
-Learning PageObject
-# Необходимо добавить актуальный для системы chrome driver в src/test/resources/
+Learning PageObject 
+<br />Необходимо добавить актуальный для системы chrome driver в src/test/resources/
