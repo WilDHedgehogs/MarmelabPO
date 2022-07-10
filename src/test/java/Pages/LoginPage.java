@@ -1,7 +1,6 @@
 package Pages;
 
 import Service.DriverHandler;
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -21,15 +20,15 @@ public class LoginPage {
     private  WebElement signInButton;
 
     public LoginPage() {
-        this.driver = DriverHandler.getDriver();
+        driver = DriverHandler.getDriver();
         PageFactory.initElements(driver, this);
     }
 
-    public LoginPage login(String login, String password) {
+    public DashboardPage login(String login, String password) {
         userNameInput.sendKeys(login);
         passwordInput.sendKeys(password);
         signInButton.click();
-        return this; //При ошибке будет оставаться на той-же странице, при успехе будет переход на следующую
+        return new DashboardPage(); //При ошибке будет оставаться на той-же странице, при успехе будет переход на следующую
     }
 
 }

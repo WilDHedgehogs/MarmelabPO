@@ -27,6 +27,13 @@ public class DriverHandler {
         return driver;
     }
 
+    public static WebDriverWait getWait() {
+        if (wait == null) {
+            Prepare();
+        }
+        return wait;
+    }
+
     public static void stopDriver() {
         driver.quit();
 //        driver = null;
