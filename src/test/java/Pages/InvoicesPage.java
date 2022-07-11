@@ -33,13 +33,13 @@ public class InvoicesPage {
     }
 
     private WebElement getLine(int index) {
-        return table.findElement(By.cssSelector("tr:nth-child(" + index + ")"));
+        return table.findElement(By.cssSelector("tr:nth-child(" + ++index + ")"));
     }
 
     public int getLineByName(String fullName) {
         for (int i = 0; i < getTableSize(); i++) {
-            WebElement currentLine = getLine(i + 1); //В вебе нумерация с единицы?
-            if (currentLine.getText().equals(fullName)) {
+            WebElement currentLine = getLine(i);
+            if (getFullNameFromElement(currentLine).equals(fullName)) {
                 return i;
             }
         }
@@ -49,9 +49,9 @@ public class InvoicesPage {
     private WebElement getPanel(int... index) {
         //Обычно открата только онда панель. По умолчанию будем считать нулевой элемент правильным.
         //Если передается индекс, то выбираем нужный
-        //Возможно путаница в индексах, нужно будет что-то придумать.
+        //Возможна путаница в индексах, нужно будет что-то придумать.
         if (index.length == 0) {
-            index[0] = 0;
+            index = new int[]{0};
         }
         return table.findElements(By.cssSelector(".RaDatagrid-expandedPanel")).get(index[0]);
     }
@@ -114,9 +114,11 @@ public class InvoicesPage {
     }
 
     public String getCustomersFullNameFromPanel(int... index) {
-        String[] customersInfo = getPanel().findElement(
-                By.cssSelector(".MuiGrid-grid-xs-12>p")).getText().split(" "); //Также содержит адрес.
-        return customersInfo[0] + " " + customersInfo[1];
+        String customersInfo = getPanel().findElement(
+                By.cssSelector(".MuiGrid-grid-xs-12>p")).getText(); //Также содержит адрес.
+        String fullName = customersInfo.substring(0, customersInfo.indexOf(" "));
+        fullName = fullName + customersInfo.substring(customersInfo.indexOf(" "), customersInfo.indexOf("\n"));
+        return fullName;
     }
 
     public String getCustomersAddressFromPanel(int... index) {
@@ -126,6 +128,10 @@ public class InvoicesPage {
     public String getOrderFromPanel(int... index) {
         return getPanel().findElement(
                 By.cssSelector("div.MuiGrid-grid-xs-5>p")).getText();
+    }
+
+    private String getFullNameFromElement(WebElement element) {
+        return element.findElement(By.cssSelector("td.column-customer_id div.MuiTypography-body2")).getText();
     }
 
 }

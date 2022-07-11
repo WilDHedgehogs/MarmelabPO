@@ -7,6 +7,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import java.util.List;
 
@@ -20,6 +21,9 @@ public class CustomersPage {
     @FindBy(css = "tbody")
     private WebElement table;
 
+    @FindBy(css = "input.MuiSelect-nativeInput")
+    private WebElement displayedRowsInput;
+
     public CustomersPage() {
         driver = DriverHandler.getDriver();
         PageFactory.initElements(driver, this);
@@ -28,20 +32,32 @@ public class CustomersPage {
     public CustomerPage findCustomer(String fullName) {
         String surName = Operations.getSurNameFromFullName(fullName);
         searchInput.sendKeys(surName);
+        By rows = By.cssSelector("tr");
+        DriverHandler.getWait().until(ExpectedConditions.numberOfElementsToBeLessThan(
+                rows, Integer.parseInt(displayedRowsInput.getAttribute("value"))));
 
-        List<WebElement> filteredTable = table.findElements(By.cssSelector("tr"));
+        List<WebElement> filteredTable = table.findElements(rows);
         for (int i = 0; i < filteredTable.size(); i++) {
-            WebElement currentLine = getLine(i + 1); //В вебе нумерация с единицы?
-            if (currentLine.getText().equals(fullName)) {
+            WebElement currentLine = getLine(i);
+            if (getCustomersFullNameFromLine(i).equals(fullName)) {
                 currentLine.click();
-                break;
+                return new CustomerPage();
             }
         }
 
-        return new CustomerPage();
+        throw new AssertionError("По данным критериям ["+ fullName + "] элемент не найден");
     }
 
     private WebElement getLine(int index) {
-        return table.findElement(By.cssSelector("tr:nth-child(" + index + ")"));
+        return table.findElement(By.cssSelector("tr:nth-child(" + ++index + ")"));
+    }
+
+    public String getCustomersFullNameFromLine(int index) {
+        return getLine(index).findElement(
+                By.cssSelector("td.column-customer_id div.MuiTypography-body2")).getText();
+    }
+
+    private String getFullNameFromElement(WebElement element) {
+        return element.findElement(By.cssSelector("td.column-customer_id div.MuiTypography-body2")).getText();
     }
 }

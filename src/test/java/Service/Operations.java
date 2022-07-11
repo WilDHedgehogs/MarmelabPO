@@ -21,7 +21,13 @@ public class Operations {
 
     public static String calendarToString(Calendar calendar) {
         String month = String.valueOf(calendar.get(Calendar.MONTH));
+        if (month.length() == 1) {
+            month = "0" + month;
+        }
         String day = String.valueOf(calendar.get(Calendar.DATE));
+        if (day.length() == 1) {
+            day = "0" + day;
+        }
         String year = String.valueOf(calendar.get(Calendar.YEAR));
         return month + day + year;
     }

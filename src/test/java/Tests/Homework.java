@@ -67,7 +67,7 @@ public class Homework {
         String tableAddress = MainMenu
                 .invoicesClick()
                 .getCustomersAddressFromLine(invoicesPage.getLineByName(tableCustomersName));
-        assert tableAddress.equals(newAddress);
+        assert tableAddress.contains(newAddress);
 
         MainMenu.customersClick()
                 .findCustomer(tableCustomersName)

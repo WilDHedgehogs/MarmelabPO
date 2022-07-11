@@ -32,7 +32,7 @@ public class OrdersPage {
     }
 
     private WebElement getLine(int index) {
-        return table.findElement(By.cssSelector("tr:nth-child(" + index + ")"));
+        return table.findElement(By.cssSelector("tr:nth-child(" + ++index + ")"));
     }
 
     public OrdersPage selectLine(int index) {
