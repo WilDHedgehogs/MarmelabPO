@@ -73,8 +73,6 @@ public class Homework {
                 .findCustomer(tableCustomersName)
                 .setAddress(oldAddress)
                 .saveChanges();
-
-
     }
 
 }
