@@ -2,6 +2,7 @@ package Pages;
 
 import Service.DriverHandler;
 import Service.Operations;
+import Service.PropertiesHandler;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -62,7 +63,13 @@ public class InvoicesPage {
     }
 
     public InvoicesPage clickLine(int index) {
-        getLine(index).click();
+        WebElement line = getLine(index);
+        if (PropertiesHandler.getValue("browser").equals("firefox")) {
+            line.findElement(By.cssSelector("svg")).click();
+        } else {
+           line.click();
+        }
+
         return this;
     }
 

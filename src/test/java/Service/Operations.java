@@ -8,13 +8,18 @@ import java.util.GregorianCalendar;
 public class Operations {
 
     public static Calendar stringToCalendar(String date) {
-        //В данный момент используется обработка символа /, можно доработать регуляьркой при необходимости.
+        date = date.replaceAll("\\D", "/");
         Calendar calendar = new GregorianCalendar();
         int month = Integer.parseInt(date.substring(0, date.indexOf("/")));
         int day = Integer.parseInt(date.substring(date.indexOf("/") + 1, date.lastIndexOf("/")));
         int year = Integer.parseInt(date.substring(date.lastIndexOf("/") + 1));;
-        calendar.set(Calendar.MONTH, month);
-        calendar.set(Calendar.DAY_OF_MONTH, day);
+        if (PropertiesHandler.getValue("browser").equals("firefox")) {
+            calendar.set(Calendar.MONTH, day);
+            calendar.set(Calendar.DAY_OF_MONTH, month);
+        } else {
+            calendar.set(Calendar.MONTH, month);
+            calendar.set(Calendar.DAY_OF_MONTH, day);
+        }
         calendar.set(Calendar.YEAR, year);
         return calendar;
     }
@@ -29,7 +34,11 @@ public class Operations {
             day = "0" + day;
         }
         String year = String.valueOf(calendar.get(Calendar.YEAR));
-        return month + day + year;
+        if (PropertiesHandler.getValue("browser").equals("firefox")) {
+            return year + "-" + month + "-" + day;
+        } else {
+            return month + day + year;
+        }
     }
 
     public static String getNameFromFullName(String fullName) {

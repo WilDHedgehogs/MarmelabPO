@@ -2,6 +2,7 @@ package Pages;
 
 import Service.DriverHandler;
 import Service.Operations;
+import Service.PropertiesHandler;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -40,7 +41,12 @@ public class CustomersPage {
         for (int i = 0; i < filteredTable.size(); i++) {
             WebElement currentLine = getLine(i);
             if (getCustomersFullNameFromLine(i).equals(fullName)) {
-                currentLine.click();
+                if (PropertiesHandler.getValue("browser").equals("firefox")) {
+                    currentLine.findElement(By.cssSelector(".column-customer_id")).click();
+                } else {
+                    currentLine.click();
+                }
+
                 return new CustomerPage();
             }
         }
