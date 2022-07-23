@@ -43,7 +43,7 @@ public class DriverHandler {
 
     public static void stopDriver() {
         driver.quit();
-//        driver = null;
+        driver = null;
     }
 
 }

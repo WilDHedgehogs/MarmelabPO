@@ -2,22 +2,54 @@ package Tests;
 
 import Elements.MainMenu;
 import Pages.*;
+import Service.DriverHandler;
 import Service.Operations;
 import Service.PropertiesHandler;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.Random;
+import java.util.*;
 
+@RunWith(value = Parameterized.class)
 public class Homework {
+    private String login;
+    private String password;
+    @Before
+    public void init() {
+        DriverHandler.Prepare();
+        login = PropertiesHandler.getValue("login");
+        password = PropertiesHandler.getValue("password");
+    }
+
+    @After
+    public void release() {
+        DriverHandler.stopDriver();
+        login = null;
+        password = null;
+    }
+
+    public Homework(String browser) {
+        PropertiesHandler.setValue("browser", browser);
+    }
+
+    @Parameterized.Parameters(name = "browser: {0}")
+    public static Collection<Object[]> data() {
+        return List.of(new Object[][]{
+                {"chrome"},
+                {"firefox"}
+        });
+    }
 
     @Test
     public void Execution() {
-        new LoginPage().login(PropertiesHandler.getValue("login"),
-                PropertiesHandler.getValue("password"));
+        new LoginPage().login(login, password);
+        MainMenu mainMenu = new MainMenu();
 
-        MainMenu.ordersClick()
+        mainMenu.ordersClick()
                 .selectDelivered()
                 .selectLine(0)
                 .selectLine(1)
@@ -33,12 +65,12 @@ public class Homework {
         beforeDate.set(Calendar.MONTH, 8);
         beforeDate.set(Calendar.DAY_OF_MONTH, 1);
 
-        String firstCustomer = MainMenu.invoicesClick()
+        String firstCustomer = mainMenu.invoicesClick()
                 .setSinceDateInput(sinceDate)
                 .setBeforeDateInput(beforeDate)
                 .getCustomersFullNameFromLine(0);
 
-        assert (!firstCustomer.contains("Korey Mohr"));
+        Assert.assertNotEquals(firstCustomer, "Korey Mohr");
 
         InvoicesPage invoicesPage = new InvoicesPage();
         int randomIndex = new Random().nextInt(invoicesPage.getTableSize());
@@ -52,24 +84,24 @@ public class Homework {
         String panelCustomersName = invoicesPage.getCustomersFullNameFromPanel();
         String panelOrderNumber = invoicesPage.getOrderFromPanel();
 
-        assert tableId == panelId;
-        assert Operations.compareDates(tableInvoiceDate, panelInvoiceDate);
-        assert tableCustomersName.equals(panelCustomersName);
-        assert tableOrderNumber.equals(panelOrderNumber);
+        Assert.assertEquals(tableId, panelId);
+        Assert.assertTrue(Operations.compareDates(tableInvoiceDate, panelInvoiceDate));
+        Assert.assertEquals(tableCustomersName, panelCustomersName);
+        Assert.assertEquals(tableOrderNumber, panelOrderNumber);
 
-        CustomerPage customerPage = MainMenu
+        CustomerPage customerPage = mainMenu
                 .customersClick()
                 .findCustomer(tableCustomersName);
         String oldAddress = customerPage.getAddress();
         String newAddress = "Test Address";
 
         customerPage.setAddress(newAddress).saveChanges();
-        String tableAddress = MainMenu
+        String tableAddress = mainMenu
                 .invoicesClick()
                 .getCustomersAddressFromLine(invoicesPage.getLineByName(tableCustomersName));
-        assert tableAddress.contains(newAddress);
+        Assert.assertTrue(tableAddress.contains(newAddress));
 
-        MainMenu.customersClick()
+        mainMenu.customersClick()
                 .findCustomer(tableCustomersName)
                 .setAddress(oldAddress)
                 .saveChanges();

@@ -22,4 +22,8 @@ public class PropertiesHandler {
     public static String getValue(String name) {
         return properties.getProperty(name);
     }
+
+    public static void setValue(String name, String value) {
+        properties.setProperty(name, value);
+    }
 }

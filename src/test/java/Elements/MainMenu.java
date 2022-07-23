@@ -12,70 +12,70 @@ import org.openqa.selenium.support.PageFactory;
 
 public class MainMenu {
 
-    private static WebDriver driver;
-
-    static {
-        driver = DriverHandler.getDriver();
-        PageFactory.initElements(driver, MainMenu.class);
-    }
+    private final WebDriver driver;
 
     @FindBy(css = "a[href='#/']")
-    private static WebElement dashboardLink;
+    private WebElement dashboardLink;
 
     @FindBy(xpath = "//p[text()='Sales']")
-    private static WebElement salesTab;
+    private WebElement salesTab;
 
     @FindBy(css = "a[href='#/commands']")
-    private static WebElement ordersLink;
+    private WebElement ordersLink;
 
     @FindBy(css = "a[href='#/invoices']")
-    private static WebElement invoicesLink;
+    private WebElement invoicesLink;
 
     @FindBy(xpath = "//p[text()='Customers']")
-    private static WebElement customersTab;
+    private WebElement customersTab;
 
     @FindBy(css = "a[href='#/customers']")
-    private static WebElement customersLink;
+    private WebElement customersLink;
 
-    public static DashboardPage dashboardClick() {
+    public MainMenu() {
+        driver = DriverHandler.getDriver();
+        PageFactory.initElements(driver, this);
+    }
+
+    public DashboardPage dashboardClick() {
         dashboardLink.click();
         return new DashboardPage();
     }
 
-    public static OrdersPage ordersClick() {
+    public OrdersPage ordersClick() {
         ordersLink.click();
         return new OrdersPage();
     }
 
-    public static InvoicesPage invoicesClick() {
+    public InvoicesPage invoicesClick() {
         invoicesLink.click();
         return new InvoicesPage();
     }
 
-    public static CustomersPage customersClick() {
+    public CustomersPage customersClick() {
         customersLink.click();
         return new CustomersPage();
     }
 
-    private static void update() {
+    private void update() {
         //TODO: Доработать обновление
         PageFactory.initElements(driver, MainMenu.class);
     }
 
-    public static boolean isSalesTabRevealed() {
+    public boolean isSalesTabRevealed() {
         return ordersLink.isDisplayed(); //TODO: Доработать проверку
     }
 
-    public static void revealSalesTab() {
+    public void revealSalesTab() {
         salesTab.click();
         update();
     }
 
-    public static boolean isCustomersTabRevealed() {
+    public boolean isCustomersTabRevealed() {
         return customersLink.isDisplayed(); //TODO: Доработать проверку
     }
 
-    public static void revealCustomersTab() {
+    public void revealCustomersTab() {
         customersTab.click();
         update();
     }
