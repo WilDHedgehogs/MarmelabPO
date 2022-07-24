@@ -1,48 +1,42 @@
 package Pages;
 
-import Service.DriverHandler;
 import Service.Operations;
 import Service.PropertiesHandler;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.FindBy;
-import org.openqa.selenium.support.PageFactory;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-
-import java.util.List;
+import com.codeborne.selenide.*;
+import static com.codeborne.selenide.Selenide.$;
 
 public class CustomersPage {
 
-    private WebDriver driver;
+    private final SelenideElement searchInput = $("input#q");
+    private final SelenideElement table = $("tbody");
 
-    @FindBy(css = "input#q")
-    private WebElement searchInput;
-
-    @FindBy(css = "tbody")
-    private WebElement table;
-
-    @FindBy(css = "input.MuiSelect-nativeInput")
-    private WebElement displayedRowsInput;
+    private final SelenideElement displayedRowsInput = $("input.MuiSelect-nativeInput");
 
     public CustomersPage() {
-        driver = DriverHandler.getDriver();
-        PageFactory.initElements(driver, this);
+//        refresh(); //TODO: По хорошему лучше refresh, но он странно отрабатывает
     }
 
     public CustomerPage findCustomer(String fullName) {
-        String surName = Operations.getSurNameFromFullName(fullName);
-        searchInput.sendKeys(surName);
-        By rows = By.cssSelector("tr");
-        DriverHandler.getWait().until(ExpectedConditions.numberOfElementsToBeLessThan(
-                rows, Integer.parseInt(displayedRowsInput.getAttribute("value"))));
+        try {
+            if (!searchInput.getAttribute("value").equals("")) {
+                int currentTableSize = getTableSize();
+                $("svg.RaResettableTextField-clearIcon").click(); //Кнопка очистки поля ввода, потому что clear() не очищает
+                table.$$("tr").shouldHave(CollectionCondition.sizeGreaterThan(currentTableSize));
+            }
+        } catch (org.openqa.selenium.NoSuchElementException ignored) {}
 
-        List<WebElement> filteredTable = table.findElements(rows);
+        String surName = Operations.getSurNameFromFullName(fullName);
+        int defaultTableSize = getTableSize();
+        searchInput.setValue(surName);
+
+        ElementsCollection filteredTable = table.$$("tr").
+                shouldHave(CollectionCondition.sizeLessThan(defaultTableSize));
+
         for (int i = 0; i < filteredTable.size(); i++) {
-            WebElement currentLine = getLine(i);
+            SelenideElement currentLine = getLine(i);
             if (getCustomersFullNameFromLine(i).equals(fullName)) {
                 if (PropertiesHandler.getValue("browser").equals("firefox")) {
-                    currentLine.findElement(By.cssSelector(".column-customer_id")).click();
+                    currentLine.$(".column-customer_id").click();
                 } else {
                     currentLine.click();
                 }
@@ -54,16 +48,19 @@ public class CustomersPage {
         throw new AssertionError("По данным критериям ["+ fullName + "] элемент не найден");
     }
 
-    private WebElement getLine(int index) {
-        return table.findElement(By.cssSelector("tr:nth-child(" + ++index + ")"));
+    private int getTableSize() {
+        return table.$$("tr").shouldHave(CollectionCondition.sizeGreaterThan(0)).size();
+    }
+
+    private SelenideElement getLine(int index) {
+        return table.$("tr:nth-child(" + ++index + ")");
     }
 
     public String getCustomersFullNameFromLine(int index) {
-        return getLine(index).findElement(
-                By.cssSelector("td.column-customer_id div.MuiTypography-body2")).getText();
+        return getLine(index).$("td.column-customer_id div.MuiTypography-body2").getText();
     }
 
-    private String getFullNameFromElement(WebElement element) {
-        return element.findElement(By.cssSelector("td.column-customer_id div.MuiTypography-body2")).getText();
+    private String getFullNameFromElement(SelenideElement element) {
+        return element.$("td.column-customer_id div.MuiTypography-body2").getText();
     }
 }

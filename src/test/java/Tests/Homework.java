@@ -2,45 +2,51 @@ package Tests;
 
 import Elements.MainMenu;
 import Pages.*;
-import Service.DriverHandler;
 import Service.Operations;
 import Service.PropertiesHandler;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import com.codeborne.selenide.Configuration;
+import com.codeborne.selenide.junit.TextReport;
+import org.junit.*;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 import java.util.*;
 
+import static com.codeborne.selenide.Selenide.closeWebDriver;
+import static com.codeborne.selenide.Selenide.open;
+
 @RunWith(value = Parameterized.class)
 public class Homework {
     private String login;
     private String password;
+
+    @Rule
+    public TextReport textReport = new TextReport();
+
     @Before
     public void init() {
-        DriverHandler.Prepare();
+        open(PropertiesHandler.getValue("url"));
+        PropertiesHandler.setValue("browser", Configuration.browser);
         login = PropertiesHandler.getValue("login");
         password = PropertiesHandler.getValue("password");
     }
 
     @After
     public void release() {
-        DriverHandler.stopDriver();
+        closeWebDriver();
         login = null;
         password = null;
     }
 
     public Homework(String browser) {
-        PropertiesHandler.setValue("browser", browser);
+        Configuration.browser = browser;
     }
 
     @Parameterized.Parameters(name = "browser: {0}")
     public static Collection<Object[]> data() {
         return List.of(new Object[][]{
-                {"chrome"},
-                {"firefox"}
+                {"firefox"},
+                {"chrome"}
         });
     }
 

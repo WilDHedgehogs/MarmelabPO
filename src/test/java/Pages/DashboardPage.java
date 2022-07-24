@@ -1,17 +1,10 @@
 package Pages;
 
 import Elements.MainMenu;
-import Service.DriverHandler;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.support.PageFactory;
-
 public class DashboardPage {
 
-    private final WebDriver driver;
-
     public DashboardPage() {
-        this.driver = DriverHandler.getDriver();
-        PageFactory.initElements(driver, this);
+//        refresh(); //TODO: По хорошему лучше refresh, но он странно отрабатывает
     }
 
     public DashboardPage returnToDashboard() {

@@ -1,25 +1,18 @@
 package Pages;
 
-import Service.DriverHandler;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.FindBy;
-import org.openqa.selenium.support.PageFactory;
+import com.codeborne.selenide.SelenideElement;
+import org.junit.Assert;
+
+import static com.codeborne.selenide.Selenide.*;
 
 public class OrdersPage {
 
-    private WebDriver driver;
+    private final SelenideElement deliveredButton = $x("//button[contains(text(),'delivered')]");
 
-    @FindBy(xpath = "//button[contains(text(),'delivered')]")
-    private WebElement deliveredButton;
-
-    @FindBy(css = "tbody")
-    private WebElement table;
+    private final SelenideElement table = $("tbody");
 
     public OrdersPage() {
-        driver = DriverHandler.getDriver();
-        PageFactory.initElements(driver, this);
+//        refresh(); //TODO: По хорошему лучше refresh, но он странно отрабатывает
     }
 
     public OrdersPage selectDelivered() {
@@ -28,15 +21,15 @@ public class OrdersPage {
     }
 
     public int getTableSize() {
-        return table.findElements(By.cssSelector("tr")).size();
+        return table.$$("tr").size();
     }
 
-    private WebElement getLine(int index) {
-        return table.findElement(By.cssSelector("tr:nth-child(" + ++index + ")"));
+    private SelenideElement getLine(int index) {
+        return table.$("tr:nth-child(" + ++index + ")");
     }
 
     public OrdersPage selectLine(int index) {
-        getLine(index).findElement(By.cssSelector("input")).click();
+        getLine(index).$("input").click();
         return this;
     }
 
@@ -62,8 +55,7 @@ public class OrdersPage {
     }
 
     public OrdersPage checkMessage(String text) {
-        assert driver.findElement(By.cssSelector("h6.MuiTypography-subtitle1"))
-                .getText().equals(text);
+        Assert.assertEquals($("h6.MuiTypography-subtitle1").getText(), text);
         return this;
     }
 }

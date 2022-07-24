@@ -1,32 +1,23 @@
 package Pages;
 
-import Service.DriverHandler;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.FindBy;
-import org.openqa.selenium.support.PageFactory;
+import com.codeborne.selenide.SelenideElement;
+import static com.codeborne.selenide.Selenide.$;
 
 public class LoginPage {
 
-    private WebDriver driver;
+    private final SelenideElement userNameInput = $("#username");
 
-    @FindBy(css = "#username")
-    private WebElement userNameInput;
+    private final SelenideElement passwordInput = $("#password");
 
-    @FindBy(css = "#password")
-    private WebElement passwordInput;
-
-    @FindBy(css = "button[type=submit]")
-    private  WebElement signInButton;
+    private  final SelenideElement signInButton = $("button[type=submit]");
 
     public LoginPage() {
-        driver = DriverHandler.getDriver();
-        PageFactory.initElements(driver, this);
+//        refresh(); //TODO: По хорошему лучше refresh, но он странно отрабатывает
     }
 
     public DashboardPage login(String login, String password) {
-        userNameInput.sendKeys(login);
-        passwordInput.sendKeys(password);
+        userNameInput.setValue(login);
+        passwordInput.setValue(password);
         signInButton.click();
         return new DashboardPage(); //При ошибке будет оставаться на той-же странице, при успехе будет переход на следующую
     }

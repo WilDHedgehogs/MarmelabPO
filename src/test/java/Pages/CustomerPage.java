@@ -1,34 +1,25 @@
 package Pages;
 
-import Service.DriverHandler;
+import com.codeborne.selenide.SelenideElement;
 import org.openqa.selenium.Keys;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.FindBy;
-import org.openqa.selenium.support.PageFactory;
+import static com.codeborne.selenide.Selenide.$;
 
 public class CustomerPage {
+    private final SelenideElement addressInput = $("textarea#address");
 
-    private final WebDriver driver;
-
-    @FindBy(css = "textarea#address")
-    private WebElement addressInput;
-
-    @FindBy(css = "button[type=submit]")
-    private WebElement saveButton;
-
-    public CustomerPage() {
-        driver = DriverHandler.getDriver();
-        PageFactory.initElements(driver, this);
-    }
+    private final SelenideElement saveButton = $("button[type=submit]");
 
     public String getAddress() {
         return addressInput.getText();
     }
 
+    public CustomerPage() {
+//        refresh(); //TODO: По хорошему лучше refresh, но он странно отрабатывает
+    }
+
     public CustomerPage setAddress(String address) {
-        addressInput.sendKeys(Keys.chord(Keys.CONTROL, "a"));
-        addressInput.sendKeys(address);
+        addressInput.setValue(Keys.chord(Keys.CONTROL, "a"));
+        addressInput.setValue(address);
         return this;
     }
 

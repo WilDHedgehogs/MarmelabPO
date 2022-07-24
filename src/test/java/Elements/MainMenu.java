@@ -4,38 +4,22 @@ import Pages.CustomersPage;
 import Pages.DashboardPage;
 import Pages.InvoicesPage;
 import Pages.OrdersPage;
-import Service.DriverHandler;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.FindBy;
-import org.openqa.selenium.support.PageFactory;
+import com.codeborne.selenide.SelenideElement;
+import static com.codeborne.selenide.Selenide.*;
 
 public class MainMenu {
 
-    private final WebDriver driver;
+    private final SelenideElement dashboardLink = $("a[href='#/']");
 
-    @FindBy(css = "a[href='#/']")
-    private WebElement dashboardLink;
+    private final SelenideElement salesTab = $x("//p[text()='Sales']");
 
-    @FindBy(xpath = "//p[text()='Sales']")
-    private WebElement salesTab;
+    private final SelenideElement ordersLink = $("a[href='#/commands']");
 
-    @FindBy(css = "a[href='#/commands']")
-    private WebElement ordersLink;
+    private final SelenideElement invoicesLink = $("a[href='#/invoices']");
 
-    @FindBy(css = "a[href='#/invoices']")
-    private WebElement invoicesLink;
+    private final SelenideElement customersTab = $("//p[text()='Customers']");
 
-    @FindBy(xpath = "//p[text()='Customers']")
-    private WebElement customersTab;
-
-    @FindBy(css = "a[href='#/customers']")
-    private WebElement customersLink;
-
-    public MainMenu() {
-        driver = DriverHandler.getDriver();
-        PageFactory.initElements(driver, this);
-    }
+    private final SelenideElement customersLink = $("a[href='#/customers']");
 
     public DashboardPage dashboardClick() {
         dashboardLink.click();
@@ -57,18 +41,12 @@ public class MainMenu {
         return new CustomersPage();
     }
 
-    private void update() {
-        //TODO: Доработать обновление
-        PageFactory.initElements(driver, MainMenu.class);
-    }
-
     public boolean isSalesTabRevealed() {
         return ordersLink.isDisplayed(); //TODO: Доработать проверку
     }
 
     public void revealSalesTab() {
         salesTab.click();
-        update();
     }
 
     public boolean isCustomersTabRevealed() {
@@ -77,7 +55,6 @@ public class MainMenu {
 
     public void revealCustomersTab() {
         customersTab.click();
-        update();
     }
 
 }
