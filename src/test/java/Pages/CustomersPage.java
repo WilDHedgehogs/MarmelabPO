@@ -3,6 +3,8 @@ package Pages;
 import Service.Operations;
 import Service.PropertiesHandler;
 import com.codeborne.selenide.*;
+import io.qameta.allure.Step;
+
 import static com.codeborne.selenide.Selenide.$;
 
 public class CustomersPage {
@@ -16,6 +18,7 @@ public class CustomersPage {
 //        refresh(); //TODO: По хорошему лучше refresh, но он странно отрабатывает
     }
 
+    @Step("Поиск покупателя {fullName} на странице Customers")
     public CustomerPage findCustomer(String fullName) {
         try {
             if (!searchInput.getAttribute("value").equals("")) {
@@ -56,6 +59,7 @@ public class CustomersPage {
         return table.$("tr:nth-child(" + ++index + ")");
     }
 
+    @Step("Получение имени пользователя из таблицы на странице Customers по индексу {index}")
     public String getCustomersFullNameFromLine(int index) {
         return getLine(index).$("td.column-customer_id div.MuiTypography-body2").getText();
     }

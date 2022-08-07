@@ -5,7 +5,13 @@ import Pages.*;
 import Service.Operations;
 import Service.PropertiesHandler;
 import com.codeborne.selenide.Configuration;
+import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.junit.TextReport;
+import com.codeborne.selenide.logevents.SelenideLogger;
+import io.qameta.allure.Description;
+import io.qameta.allure.Epic;
+import io.qameta.allure.Feature;
+import io.qameta.allure.selenide.AllureSelenide;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -25,6 +31,8 @@ public class Homework {
 
     @Before
     public void init() {
+        SelenideLogger.addListener("AllureSelenide",
+                new AllureSelenide().screenshots(true).savePageSource(false));
         open(PropertiesHandler.getValue("url"));
         PropertiesHandler.setValue("browser", Configuration.browser);
         login = PropertiesHandler.getValue("login");
@@ -51,6 +59,8 @@ public class Homework {
     }
 
     @Test
+    @Description("Выполнение домашнего задания")
+    @Epic("Проверки на сайте")
     public void Execution() {
         new LoginPage().login(login, password);
         MainMenu mainMenu = new MainMenu();
