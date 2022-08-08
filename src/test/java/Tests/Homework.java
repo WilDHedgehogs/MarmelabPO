@@ -6,6 +6,7 @@ import Service.Operations;
 import Service.PropertiesHandler;
 import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.Selenide;
+import com.codeborne.selenide.WebDriverRunner;
 import com.codeborne.selenide.junit.TextReport;
 import com.codeborne.selenide.logevents.SelenideLogger;
 import io.qameta.allure.Description;
@@ -15,6 +16,7 @@ import io.qameta.allure.selenide.AllureSelenide;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import org.openqa.selenium.remote.DesiredCapabilities;
 
 import java.util.*;
 
@@ -31,6 +33,31 @@ public class Homework {
 
     @Before
     public void init() {
+        if (Boolean.parseBoolean(PropertiesHandler.getValue("use_docker"))) {
+            // Url удалённого веб драйвера
+            Configuration.remote = "http://localhost:4444/wd/hub";
+            // Определяем версию браузера
+            if (Configuration.browser.equals("chrome")) {
+                Configuration.browserVersion = PropertiesHandler.getValue("chrome_version");
+            } else {
+                Configuration.browserVersion = PropertiesHandler.getValue("firefox_version");
+            }
+            // Создаём объект класса DesiredCapabilities, используется как настройка вашей конфигурации с помощью пары ключ-значение
+            DesiredCapabilities capabilities = new DesiredCapabilities();
+            // Включить поддержку отображения экрана браузера во время выполнения теста
+            capabilities.setCapability("enableVNC",
+                    Boolean.parseBoolean(PropertiesHandler.getValue("enable_vnc")));
+            // Включение записи видео в процессе выполнения тестов
+            capabilities.setCapability("enableVideo",
+                    Boolean.parseBoolean(PropertiesHandler.getValue("enable_video")));
+            // Переопределяем Browser capabilities
+            Configuration.browserCapabilities = capabilities;
+            Configuration.baseUrl = PropertiesHandler.getValue("url");
+            Configuration.timeout = Long.parseLong(PropertiesHandler.getValue("timeout")) * 1000;
+            // Авторизация
+//        AuthorisationPage auth = new AuthorisationPage();
+//        auth.getUrl().in();
+        }
         SelenideLogger.addListener("AllureSelenide",
                 new AllureSelenide().screenshots(true).savePageSource(false));
         open(PropertiesHandler.getValue("url"));
