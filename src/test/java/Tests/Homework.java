@@ -5,13 +5,10 @@ import Pages.*;
 import Service.Operations;
 import Service.PropertiesHandler;
 import com.codeborne.selenide.Configuration;
-import com.codeborne.selenide.Selenide;
-import com.codeborne.selenide.WebDriverRunner;
 import com.codeborne.selenide.junit.TextReport;
 import com.codeborne.selenide.logevents.SelenideLogger;
 import io.qameta.allure.Description;
 import io.qameta.allure.Epic;
-import io.qameta.allure.Feature;
 import io.qameta.allure.selenide.AllureSelenide;
 import org.junit.*;
 import org.junit.runner.RunWith;
@@ -54,9 +51,6 @@ public class Homework {
             Configuration.browserCapabilities = capabilities;
             Configuration.baseUrl = PropertiesHandler.getValue("url");
             Configuration.timeout = Long.parseLong(PropertiesHandler.getValue("timeout")) * 1000;
-            // Авторизация
-//        AuthorisationPage auth = new AuthorisationPage();
-//        auth.getUrl().in();
         }
         SelenideLogger.addListener("AllureSelenide",
                 new AllureSelenide().screenshots(true).savePageSource(false));

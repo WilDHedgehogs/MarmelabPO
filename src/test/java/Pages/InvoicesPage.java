@@ -3,6 +3,7 @@ package Pages;
 import Service.Operations;
 import Service.PropertiesHandler;
 import com.codeborne.selenide.CollectionCondition;
+import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
 import io.qameta.allure.Step;
 
@@ -71,13 +72,17 @@ public class InvoicesPage {
 
     @Step("Установка даты от на странице Invoices")
     public InvoicesPage setSinceDateInput(Calendar date) {
+        String tableData = table.getText();
         sinceDateInput.setValue(Operations.calendarToString(date));
+        $("tbody").shouldNot(Condition.text(tableData));
         return this;
     }
 
     @Step("Установка даты до на странице Invoices")
     public InvoicesPage setBeforeDateInput(Calendar date) {
+        String tableData = table.getText();
         beforeDateInput.setValue(Operations.calendarToString(date));
+        $("tbody").shouldNot(Condition.text(tableData));
         return this;
     }
 
